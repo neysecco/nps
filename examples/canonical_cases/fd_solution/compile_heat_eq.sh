@@ -1,0 +1,1 @@
+python3 -m numpy.f2py -c -m heat_eq heat_eq.F90
