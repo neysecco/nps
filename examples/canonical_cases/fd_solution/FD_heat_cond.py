@@ -105,6 +105,8 @@ MSE_ana  = R_ana/(2*nx_ana*nt_ana)
 print("\n\n## Solution for the 1-D Unsteady Heat Transfer problem")
 print("Convergence time = " + str(end_time-start_time) + " seconds")
 print("MSE = " + str(MSE_ana))
+print("nx = " + str(nx))
+print("nt = " + str(nt))
 print(" ")
 ############################################################
 ## Plot the results
