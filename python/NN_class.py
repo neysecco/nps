@@ -63,10 +63,12 @@ class NN:
             
             # Check if the user provided a seed for the random number generation
             if type(Theta_flat) is int:
-                np.random.seed(Theta_flat)
+                rng = np.random.default_rng(seed=Theta_flat)
+            else:
+                rng = np.random.default_rng()
                 
             #Assign random weights with the Nguyen-Widrow initialization
-            self.Theta_flat = weights_init(num_inputs, num_outputs, num_neurons_list, self.num_theta)
+            self.Theta_flat = weights_init(num_inputs, num_outputs, num_neurons_list, self.num_theta, rng)
 
         elif len(Theta_flat) == self.num_theta: #Check if user provided the correct number of weights
             
@@ -227,7 +229,7 @@ def extract_theta(NN_obj, layer_index):
 
 ###########################################
 
-def weights_init(num_inputs, num_outputs, num_neurons_list, num_theta):
+def weights_init(num_inputs, num_outputs, num_neurons_list, num_theta, rng):
     '''
     This function initializes the ANN weights using the Nguyen-Widrow
     initialization algorithm
@@ -242,7 +244,7 @@ def weights_init(num_inputs, num_outputs, num_neurons_list, num_theta):
     ## INPUT LAYER
 
     # Get NW weights
-    Theta_flat_part = NW_init(num_inputs, num_neurons_list[0])
+    Theta_flat_part = NW_init(num_inputs, num_neurons_list[0], rng)
 
     # Add weights to the full array
     Theta_flat[position:position+len(Theta_flat_part)] = Theta_flat_part
@@ -254,7 +256,7 @@ def weights_init(num_inputs, num_outputs, num_neurons_list, num_theta):
     for index in range(1,len(num_neurons_list)):
 
         # Get NW weights
-        Theta_flat_part = NW_init(num_neurons_list[index-1],num_neurons_list[index])
+        Theta_flat_part = NW_init(num_neurons_list[index-1],num_neurons_list[index],rng)
 
         # Add weights to the full array
         Theta_flat[position:position+len(Theta_flat_part)] = Theta_flat_part
@@ -265,7 +267,7 @@ def weights_init(num_inputs, num_outputs, num_neurons_list, num_theta):
     ## OUTPUT LAYER
 
     # Get NW weights
-    Theta_flat_part = NW_init(num_neurons_list[-1], num_outputs)
+    Theta_flat_part = NW_init(num_neurons_list[-1], num_outputs, rng)
 
     # Add weights to the full array
     Theta_flat[position:position+len(Theta_flat_part)] = Theta_flat_part
@@ -280,7 +282,7 @@ def weights_init(num_inputs, num_outputs, num_neurons_list, num_theta):
 
 ###########################################
 
-def NW_init(num_neurons_prev, num_neurons_next):
+def NW_init(num_neurons_prev, num_neurons_next, rng):
     '''
     This auxiliary function contains the
     basic expressions of the Nguyen-Widrow weights initialization.
@@ -293,10 +295,10 @@ def NW_init(num_neurons_prev, num_neurons_next):
     magW = num_neurons_next**(1/num_neurons_prev)
 
     # Generate the biases
-    Wbias = (2*np.random.rand(num_neurons_next,1)-1)*magW
+    Wbias = (2*rng.random((num_neurons_next,1))-1)*magW
 
     # Generate other weights
-    Wneu = 2*np.random.rand(num_neurons_next,num_neurons_prev)-1
+    Wneu = 2*rng.random((num_neurons_next,num_neurons_prev))-1
 
     # Normalize each row by the desired magnitude
     Wneu_norm = np.array([np.linalg.norm(Wneu, axis=1)]).T # We need a column vector

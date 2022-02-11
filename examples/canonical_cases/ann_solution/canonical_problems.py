@@ -4,11 +4,11 @@ import pickle
 import matplotlib.pyplot as plt
 from numpy import zeros, linspace, argmin
 
-canonical_prob   = ['lin_adv', 'lin_adv2','heat_eq','heat_cond','burgers']
+canonical_prob   = ['lin_adv']#, 'lin_adv2','heat_eq','heat_cond','burgers']
 minor_iter  = [2500,2500,2500,2500,2500]
 major_iter  = [10,10,10,10,10,10,10]
 forced_iter = 0
-theta_seed  = [800,600,200,850,850,123,123]
+theta_seed  = [500,600,200,850,850,123,123]
 boundary_points = [31,31,31,31,31]
 domain_points   = [21,21,31,21,31]
 num_neurons     = [[5,5],[5,5],[5,5,5],[5,5],[5,5,5]]

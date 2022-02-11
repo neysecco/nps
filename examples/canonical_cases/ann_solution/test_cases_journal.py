@@ -30,8 +30,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
                                 image_dir folder of the test_case.
     '''
 
-    # Set a random seed to always generate the same results
-    np.random.seed(111)
+    # Define a random number generator for repeatibility
+    rng = np.random.default_rng(seed=Theta_seed)
 
     opt_options = {}
 
@@ -81,7 +81,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
          Inputs_top,
          Inputs_left] = create_2Ddomain(x0, xf, nx,
                                         y0, yf, ny,
-                                        dist=dist_type)[1:]
+                                        dist=dist_type,
+                                        rng=rng)[1:]
 
         # Generate coarse interior points
         nxint = domain_points
@@ -90,7 +91,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
         Inputs_do = create_2Ddomain(x0, xf, nxint,
                                     y0, yf, nyint,
                                     dist=dist_type,
-                                    no_borders=True)[0]
+                                    no_borders=True,
+                                    rng=rng)[0]
 
         # Add the refined boundary points to the coarse domain
         Inputs_do = np.hstack([Inputs_do, Inputs_lower, Inputs_right, Inputs_top, Inputs_left])
@@ -307,7 +309,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
          Inputs_top,
          Inputs_left] = create_2Ddomain(x0, xf, nx,
                                         y0, yf, ny,
-                                        dist=dist_type)[1:]
+                                        dist=dist_type,
+                                        rng=rng)[1:]
                                         
         # Generate coarse interior points
         nxint = domain_points
@@ -316,7 +319,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
         Inputs_do = create_2Ddomain(x0, xf, nxint,
                                     y0, yf, nyint,
                                     dist=dist_type,
-                                    no_borders=True)[0]
+                                    no_borders=True,
+                                    rng=rng)[0]
 
         # Add the refined boundary points to the coarse domain
         Inputs_do = np.hstack([Inputs_do, Inputs_lower, Inputs_right, Inputs_top, Inputs_left])
@@ -334,7 +338,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
          Inputs_top,
          Inputs_left] = create_2Ddomain(x0, xf, nx,
                                         y0, yf, ny,
-                                        dist=dist_type)
+                                        dist=dist_type,
+                                        rng=rng)
         '''
         
         ## NEURAL NETWORK
@@ -522,7 +527,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
          Inputs_top,
          Inputs_left] = create_2Ddomain(x0, xf, nx,
                                         y0, yf, ny,
-                                        dist=dist_type)[1:]
+                                        dist=dist_type,
+                                        rng=rng)[1:]
 
         # Generate coarse interior points
         nxint = domain_points
@@ -531,7 +537,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
         Inputs_do = create_2Ddomain(x0, xf, nxint,
                                     y0, yf, nyint,
                                     dist=dist_type,
-                                    no_borders=True)[0]
+                                    no_borders=True,
+                                    rng=rng)[0]
 
         # Add the refined boundary points to the coarse domain
         Inputs_do = np.hstack([Inputs_do, Inputs_lower, Inputs_right, Inputs_top, Inputs_left])
@@ -716,7 +723,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
          Inputs_top,
          Inputs_left] = create_2Ddomain(x0, xf, nx,
                                         y0, yf, ny,
-                                        dist=dist_type)[1:]
+                                        dist=dist_type,
+                                        rng=rng)[1:]
 
         # Generate coarse interior points
         nxint = domain_points
@@ -725,7 +733,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
         Inputs_do = create_2Ddomain(x0, xf, nxint,
                                     y0, yf, nyint,
                                     dist=dist_type,
-                                    no_borders=True)[0]
+                                    no_borders=True,
+                                    rng=rng)[0]
 
         # Add the refined boundary points to the coarse domain
         Inputs_do = np.hstack([Inputs_do, Inputs_lower, Inputs_right, Inputs_top, Inputs_left])
@@ -953,13 +962,13 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
         elif dist_type == 'unstructured':
 
             # Near field
-            r_rand = (ri-r0)*np.random.rand(nr*ntheta) + r0
-            theta_rand = 2*np.pi*np.random.rand(nr*ntheta)
+            r_rand = (ri-r0)*rng.random(nr*ntheta) + r0
+            theta_rand = 2*np.pi*rng.random(nr*ntheta)
             Inputs_near = np.vstack([r_rand*np.cos(theta_rand), r_rand*np.sin(theta_rand)])
         
             # Far field
-            r_rand = (rf-ri)*np.random.rand(nr*ntheta) + ri
-            theta_rand = 2*np.pi*np.random.rand(nr*ntheta)
+            r_rand = (rf-ri)*rng.random(nr*ntheta) + ri
+            theta_rand = 2*np.pi*rng.random(nr*ntheta)
             Inputs_far = np.vstack([r_rand*np.cos(theta_rand), r_rand*np.sin(theta_rand)])
 
         ## NEURAL NETWORK
@@ -1293,13 +1302,13 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
         elif dist_type == 'unstructured':
 
             # Near field
-            r_rand_near = (ri-r0)*np.random.rand(nr*ntheta) + r0
-            theta_rand_near = 2*np.pi*np.random.rand(nr*ntheta)
+            r_rand_near = (ri-r0)*rng.random(nr*ntheta) + r0
+            theta_rand_near = 2*np.pi*rng.random(nr*ntheta)
             #Inputs_near = np.vstack([r_rand*np.cos(theta_rand), r_rand*np.sin(theta_rand)])
         
             # Far field
-            r_rand_far = (rf-ri)*np.random.rand(nr*ntheta) + ri
-            theta_rand_far = 2*np.pi*np.random.rand(nr*ntheta)
+            r_rand_far = (rf-ri)*rng.random(nr*ntheta) + ri
+            theta_rand_far = 2*np.pi*rng.random(nr*ntheta)
             #Inputs_far = np.vstack([r_rand*np.cos(theta_rand), r_rand*np.sin(theta_rand)])
             Inputs_do = np.hstack([np.vstack([r_rand_near*np.cos(theta_rand_near), r_rand_near*np.sin(theta_rand_near)]),np.vstack([r_rand_far*np.cos(theta_rand_far), r_rand_far*np.sin(theta_rand_far)])])
 
@@ -1736,7 +1745,8 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
 def create_2Ddomain(x0, xf, nx,
                     y0, yf, ny,
                     dist='structured',
-                    no_borders=False):
+                    no_borders=False,
+                    rng=None):
     '''
     This function distributed nx*ny points over a 2D domain in
     structured or unstructured fashion.
@@ -1753,7 +1763,13 @@ def create_2Ddomain(x0, xf, nx,
     dist: string -> Either 'structured' or 'unstructured'
     no_borders: logical -> Eliminate the boundary points from
                            the domain (Inputs_do)
+    rng: Random number generator -> Generator given by np.random.default_rng.
+                                    Can be a generator already defined before.
     '''
+
+    # Check if used defined random number generator
+    if rng is None:
+        rng = np.random.default_rng()
 
     ## BORDERS
 
@@ -1779,8 +1795,8 @@ def create_2Ddomain(x0, xf, nx,
     
         n_samples = (nx-2)*(ny-2)
 
-        x_do = (xf-x0)*np.random.rand(n_samples) + x0
-        y_do = (yf-y0)*np.random.rand(n_samples) + y0
+        x_do = (xf-x0)*rng.random(n_samples) + x0
+        y_do = (yf-y0)*rng.random(n_samples) + y0
 
         Inputs_do = np.vstack([x_do,y_do])
 
