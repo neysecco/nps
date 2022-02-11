@@ -31,17 +31,19 @@ L = 1.0
 # Simulation time
 tf = 1.0
         
-Fo = 0.50
 # Generate refined boundaries
 #nx
 nx = 17
-x = np.linspace(0,L,nx)
+x  = np.linspace(0,L,nx)
 delta_x = x[1] - x[0]   # since it is a linear distribution 
 
 #nt
-delta_t = (Fo*delta_x**2)/k
-nt = int(tf/delta_t)
-t = np.linspace(0,tf,nt)
+nt = 52
+t  = np.linspace(0,tf,nt)
+delta_t = t[1] - t[0]
+
+#Fo
+Fo = k*delta_t/delta_x**2
 
 #mesh
 X,T = np.meshgrid(x,t)
