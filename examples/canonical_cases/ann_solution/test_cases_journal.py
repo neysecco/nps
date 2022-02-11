@@ -1685,6 +1685,10 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
         fig.savefig(case_name + '_MSE_iterations.pdf',dpi=300)
         '''
         
+        # Transpose matrix to facilitate for loop
+        # Now each weight iteration is a line
+        Theta_hist_ALM = Theta_hist_ALM.T
+
         #ALM history
         valMSE_ALM         = np.zeros(len(Theta_hist_ALM))
         Residual_PDE_ALM   = np.zeros(len(Theta_hist_ALM))

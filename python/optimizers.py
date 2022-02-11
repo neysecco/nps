@@ -149,7 +149,7 @@ def fminscg(cost_function, x0, display=True, iterations=1000, grad_tol=1e-10):
     return x, F, motive
 
 ###########################################
-def ALM(design_functions,x0,display=True,major_iterations=50,gamma=1,delta_x_tol=1e-7,grad_opt='fminscg',minor_iterations=1000,grad_tol=1e-10,save_minor_hist=False):
+def ALM(design_functions,x0,display=True,major_iterations=50,gamma=1,delta_x_tol=1e-7,grad_opt='fminscg',minor_iterations=1000,grad_tol=1e-10,save_minor_hist=False,forced_iterations=0):
     #INPUTS:
     # design_functions : function handle -> handle for the design functions (objective + constraint functions).
     #                    This function should return F (scalar), dF (1xn array), G (1xm array), dG (mxn array),
@@ -177,7 +177,7 @@ def ALM(design_functions,x0,display=True,major_iterations=50,gamma=1,delta_x_tol
     F0, dF, G0, dG, H0, dH = design_functions(x0)
 
     #INITIALIZATION
-
+    
     #Initialize Lambdas
     Lambda_G = ones(len(G0))
     Lambda_H = ones(len(H0))
@@ -226,8 +226,8 @@ def ALM(design_functions,x0,display=True,major_iterations=50,gamma=1,delta_x_tol
             return ALM_pseudo_func(x,design_functions,rp,Lambda_G,Lambda_H)
 
         # Use the appropriate gradient-based optimizer
-        if grad_opt == 'fminscg':# or k<=1:
-    
+        if grad_opt.lower() == 'fminscg' or (grad_opt.lower() == 'bfgs' and k < forced_iterations and forced_iterations > 0):
+
             #Optimize the pseudo-objective function
             x_minor,A,motive = fminscg(cost_function, x[:,k], display, iterations=minor_iterations, grad_tol=grad_tol)
 

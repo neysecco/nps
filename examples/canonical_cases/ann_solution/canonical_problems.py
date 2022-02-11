@@ -1,5 +1,5 @@
 from nps import NN, funcs_pde, postproc_pde
-from test_cases_journal import load_case
+from test_cases_journal import load_case, plot_canonical
 import pickle
 import matplotlib.pyplot as plt
 from numpy import zeros, linspace, argmin
@@ -37,7 +37,7 @@ def eval_case(theta_seed, canonical_prob, minor_iter, major_iter, boundary_point
     Targets_bc] = load_case(canonical_prob, dist_type, optimizer,boundary_points,domain_points,
                             clean_image_dir=True,num_neurons=num_neurons,Theta_seed=theta_seed,axis_label=axis_label)
     
-    # Modifie the initial seed.
+    # Modify the initial seed.
     training_time = 0.0
     rhoKS         = 0.0
     reg_factor    = 0.0
@@ -69,7 +69,7 @@ def eval_case(theta_seed, canonical_prob, minor_iter, major_iter, boundary_point
                                                                          
     valMSE = val_function(NN_set)
     print('\n\n#Plotting results for the '+canonical_prob+' problem\n')
-    funcs_pde.plot_canonical(NN_set, plot_function, './'+ canonical_prob + '/'+ canonical_prob)
+    plot_canonical(NN_set, plot_function, './'+ canonical_prob + '/'+ canonical_prob)
     MSEhist_function(NN_set,Theta_flat_hist,Theta_hist_ALM,1)
     
     return valMSE, training_time

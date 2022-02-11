@@ -36,6 +36,9 @@ def train_pde_nn(NN_set, Residual_BC, Residual_PDE,
     rhoKS: float -> KS function parameter.
     '''
     
+    # Dummy result for the ALM case
+    Theta_flat_ALM_hist = None
+
     # Check if we start a new optimization or use
     # previous information
     if not load_hist:
@@ -225,7 +228,7 @@ def train_pde_nn(NN_set, Residual_BC, Residual_PDE,
 
             # Save the history file
             if hist_file is not None:
-                save_history(NN_set, Theta_flat_hist, obj_hist, num_calls,
+                save_history(NN_set, Theta_flat_hist, Theta_flat_ALM_hist, obj_hist, num_calls,
                              optimizer, opt_options, reg_factor, rhoKS,
                              hist_file)
             
@@ -353,10 +356,10 @@ def train_pde_nn(NN_set, Residual_BC, Residual_PDE,
         
         # Run the optimization
         from .optimizers import ALM
-        [Theta_flat_hist_ALM] = ALM(objConFunc, Theta_flat0, **opt_options)[0:1]
+        [Theta_flat_ALM_hist] = ALM(objConFunc, Theta_flat0, **opt_options)[0:1]
 
         # Get the final answer
-        Theta_flatf = Theta_flat_hist_ALM[:,-1]
+        Theta_flatf = Theta_flat_ALM_hist[:,-1]
 
     else:
 
@@ -405,12 +408,13 @@ def train_pde_nn(NN_set, Residual_BC, Residual_PDE,
 
     # Save final state into the pickle file
     if hist_file is not None:
-        save_history(NN_set, Theta_flat_hist, obj_hist, num_calls,
+        save_history(NN_set, Theta_flat_hist, Theta_flat_ALM_hist,
+                     obj_hist, num_calls,
                      optimizer, opt_options, reg_factor, rhoKS,
                      hist_file)
 
     # RETURNS
-    return obj_hist, Theta_flat_hist, training_time
+    return obj_hist, Theta_flat_hist, training_time, Theta_flat_ALM_hist
     #NN_set.Theta_flat is updated
 
 ###########################################
@@ -489,7 +493,8 @@ def use_NN_set(Inputs,NN_set):
 
 ###########################################
 
-def save_history(NN_set, Theta_flat_hist, obj_hist, num_calls,
+def save_history(NN_set, Theta_flat_hist, Theta_flat_ALM_hist,
+                 obj_hist, num_calls,
                  optimizer, opt_options, reg_factor, rhoKS,
                  hist_file):
     '''
@@ -500,6 +505,7 @@ def save_history(NN_set, Theta_flat_hist, obj_hist, num_calls,
     # Create dictionary with parameters and results
     save_data = {'NN_set':NN_set,
                  'Theta_flat_hist':Theta_flat_hist,
+                 'Theta_flat_ALM_hist':Theta_flat_ALM_hist,
                  'obj_hist':obj_hist,
                  'num_calls':num_calls,
                  'optimizer':optimizer,
@@ -526,6 +532,7 @@ def load_history(hist_file):
     # Split the dictionary
     NN_set = save_data['NN_set']
     Theta_flat_hist = save_data['Theta_flat_hist']
+    Theta_flat_ALM_hist = save_data['Theta_flat_ALM_hist']
     obj_hist = save_data['obj_hist']
     num_calls = save_data['num_calls']
     optimizer = save_data['optimizer']
@@ -533,7 +540,7 @@ def load_history(hist_file):
     reg_factor = save_data['reg_factor']
     rhoKS = save_data['rhoKS']
 
-    return NN_set, Theta_flat_hist, obj_hist, num_calls, optimizer, opt_options, reg_factor, rhoKS
+    return NN_set, Theta_flat_hist, obj_hist, num_calls, optimizer, opt_options, reg_factor, rhoKS, Theta_flat_ALM_hist
 
 ###########################################
 
