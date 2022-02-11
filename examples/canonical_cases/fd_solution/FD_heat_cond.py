@@ -34,7 +34,7 @@ tf = 1.0
 Fo = 0.50
 # Generate refined boundaries
 #nx
-nx = 13
+nx = 17
 x = np.linspace(0,L,nx)
 delta_x = x[1] - x[0]   # since it is a linear distribution 
 
@@ -59,9 +59,12 @@ print("\nFo = " + str(k*delta_t/delta_x**2) + " || cond. for stability: Fo <= 1/
 Ugrid[:,0] = Tl
 
 ## Analytical solution
-def analytical_sol():
+def analytical_sol(nt,nx):
     # Initialize Output array
     Outputs = np.zeros([nt,nx])
+    x = np.linspace(0,L,nx)
+    t = np.linspace(0,tf,nt)
+    X,T = np.meshgrid(x,t)
     # Temperature difference
     deltaT = Tl - Tr
     # Select number of Fourier terms
@@ -71,9 +74,15 @@ def analytical_sol():
     for ti in range(nt):
         for xi in range(nx):        
             Outputs[ti][xi] = deltaT*(1-x[xi]/L) + 2/L*np.sum(bn*np.sin(N*np.pi*x[xi]/L)*np.exp(-k*N**2*np.pi**2*t[ti]/L**2))
+
     return Outputs
 
-Ugrid_ana = analytical_sol()
+nt_ana = 301
+nx_ana = 301
+x_ana = np.linspace(0,L,nx_ana)
+t_ana = np.linspace(0,tf,nt_ana)
+X_ana,T_ana = np.meshgrid(x_ana,t_ana)
+Ugrid_ana = analytical_sol(nt_ana, nx_ana)
 
 ############################################################
 ## Execution
@@ -83,10 +92,13 @@ for ti in range(1,nt): # time sweep, excluding the time at boundary where t == 0
     for xi in range(1,nx-1): # position sweep, excluding the position where x == -1
         Ugrid[ti,xi] = Ugrid[ti-1][xi] + Fo*(Ugrid[ti-1][xi+1] + Ugrid[ti-1][xi-1] - 2*Ugrid[ti-1][xi])
 
-R_ana    = np.sum((Ugrid-Ugrid_ana)**2)
-MSE_ana  = R_ana/(2*nx*nt) 
-
 end_time = time.time()
+
+from scipy.interpolate import RectBivariateSpline as spline
+Ugrid_int = spline(t,x,Ugrid).ev(T_ana[:],X_ana[:]).reshape(X_ana.shape)
+
+R_ana    = np.sum((Ugrid_int-Ugrid_ana)**2)
+MSE_ana  = R_ana/(2*nx_ana*nt_ana) 
 
 print("\n\n## Solution for the 1-D Unsteady Heat Transfer problem")
 print("Convergence time = " + str(end_time-start_time) + " seconds")
@@ -111,7 +123,7 @@ fig.savefig("./heat_cond/FD_heat_cond_"+str(nx)+"_x_"+str(nt)+".pdf")
 # Figure 2
 fig2 = plt.figure(figsize=(8,8))
 plt.subplot(3, 1, 1)
-plt.plot(x, Ugrid_ana[0][:],'k',label='Analytical',linewidth=2)
+plt.plot(x_ana, Ugrid_ana[0][:],'k',label='Analytical',linewidth=2)
 plt.plot(x, Ugrid[0],'r',label='Traditional solution',linewidth=2)
 plt.legend(loc='best',fontsize=18)
 plt.title(r'$t=0$', fontsize=18) 
@@ -122,8 +134,8 @@ plt.yticks(fontsize=14)
 plt.grid(False)
 
 plt.subplot(3, 1, 2)
-plt.plot(x, Ugrid_ana[int(len(t)/2)][:],'k',linewidth=2)
-plt.plot(x, Ugrid_ana[int(len(t)/2)][:],'r',linewidth=2)
+plt.plot(x_ana, Ugrid_ana[int(len(t_ana)/2)][:],'k',linewidth=2)
+plt.plot(x, Ugrid[int(len(t)/2)][:],'r',linewidth=2)
 plt.title(r'$t='+str(t[int(len(t)/2)])+'$',fontsize=18)
 plt.ylabel(r'$u$',fontsize=18)
 plt.xlabel(' ',fontsize=14)
@@ -132,7 +144,7 @@ plt.yticks(fontsize=14)
 plt.grid(False)
 
 plt.subplot(3, 1, 3)
-plt.plot(x, Ugrid_ana[-1][:],'k',linewidth=2)
+plt.plot(x_ana, Ugrid_ana[-1][:],'k',linewidth=2)
 plt.plot(x, Ugrid[-1],'r',linewidth=2)
 plt.title(r'$t=1$', fontsize=18)
 plt.ylabel(r'$u$',fontsize=18)

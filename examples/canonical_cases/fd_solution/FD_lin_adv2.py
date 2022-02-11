@@ -26,12 +26,15 @@ if not os.path.exists('./lin_adv2'):
 #############################################################
 ## DOMAIN
 
+# Domain sizes
+nx = 28001
+nt = 28001
+nx_ana = 301
+nt_ana = 301
+
 ## Analytical solution
-def analytical_sol():
-    Outputs = np.zeros([nt,nx])
-    for xi in range(nx):
-        for ti in range(nt):
-            Outputs[ti][xi] = np.sin(2*(x[xi]-a*t[ti])*np.pi)
+def analytical_sol(X_ana, T_ana):
+    Outputs = np.sin(2*(X_ana-a*T_ana)*np.pi)
     return Outputs
 
 # Bounds
@@ -39,10 +42,6 @@ x0 = -1.0
 xf = 1.0
 t0 = 0.0
 tf = 1.0
-
-# Generate refined boundaries
-nx = 28001
-nt = 28001
 
 x = np.linspace(x0,xf,nx)
 t = np.linspace(t0,tf,nt)
@@ -67,22 +66,26 @@ print(' ')
 for ii in range(nx):
     Ugrid[0,ii] = np.sin(2*x[ii]*np.pi)
 
-Ugrid_ana = analytical_sol()
+x_ana = np.linspace(x0,xf,nx_ana)
+t_ana = np.linspace(t0,tf,nt_ana)
+X_ana,T_ana = np.meshgrid(x_ana,t_ana)
+Ugrid_ana = analytical_sol(X_ana, T_ana)
+
 ############################################################
 ## Execution
 start_time = time.time()
 
 for ti in range(1,nt): # time sweep, excluding the time at boundary where t == 0
-    for xi in range(0,nx): # position sweep, excluding the position where x == -1
-        if xi == nx-1:
-            Ugrid[ti,xi] = Ugrid[ti-1][xi] - (a*delta_t/delta_x)*(Ugrid[ti-1][0] - Ugrid[ti-1][xi])
-        else:
-            Ugrid[ti,xi] = Ugrid[ti-1][xi] - (a*delta_t/delta_x)*(Ugrid[ti-1][xi+1] - Ugrid[ti-1][xi])
-
-R_ana    = np.sum((Ugrid-Ugrid_ana)**2)
-MSE_ana  = R_ana/(2*nx*nt) 
+    Ugrid[ti,:-1] = Ugrid[ti-1,:-1] - (a*delta_t/delta_x)*(Ugrid[ti-1][1:] - Ugrid[ti-1][:-1])
+    Ugrid[ti,-1] = Ugrid[ti-1,-1] - (a*delta_t/delta_x)*(Ugrid[ti-1][0] - Ugrid[ti-1][-1])
 
 end_time = time.time()
+
+# Interpolate solution to validation points
+from scipy.interpolate import RectBivariateSpline as spline
+Ugrid_int = spline(t,x,Ugrid).ev(T_ana[:],X_ana[:]).reshape(X_ana.shape)
+R_ana    = np.sum((Ugrid_int-Ugrid_ana)**2)
+MSE_ana  = R_ana/(2*nx_ana*nt_ana) 
 
 print("\n\n## Solution for the 1-D Periodic Linear Advection problem")
 print("Convergence time = " + str(end_time-start_time) + " seconds")
@@ -102,9 +105,9 @@ Ts      = [[0]*slice_size for _ in range(slice_size)]
 Ugrid_s = [[0]*slice_size for _ in range(slice_size)]
 
 ik = 0
-for i in np.linspace(0,nx-1,slice_size,dtype=int,endpoint=True):
+for i in np.linspace(0,nt-1,slice_size,dtype=int,endpoint=True):
     jk = 0
-    for j in np.linspace(0,nt-1,slice_size,dtype=int,endpoint=True):
+    for j in np.linspace(0,nx-1,slice_size,dtype=int,endpoint=True):
         Xs[ik][jk] = X[i][j]
         Ts[ik][jk] = T[i][j]
         Ugrid_s[ik][jk] = Ugrid[i][j]
@@ -129,7 +132,7 @@ fig.savefig("./lin_adv2/FD_lin_adv2_"+str(nx)+"_x_"+str(nt)+".pdf")
 # Figure 2
 fig2 = plt.figure(figsize=(8,6))
 plt.subplot(2, 1, 1)
-plt.plot(x, Ugrid_ana[0][:],'k',label='Analytical',linewidth=2)
+plt.plot(x_ana, Ugrid_int[0][:],'k',label='Analytical',linewidth=2)
 plt.plot(x, Ugrid[0],'r',label='Traditional solution',linewidth=2)
 plt.legend(loc='upper right', fontsize=18)
 plt.title(r'$t=0$', fontsize=18)
@@ -140,7 +143,7 @@ plt.yticks(fontsize=14)
 plt.grid(False)
 
 plt.subplot(2, 1, 2)
-plt.plot(x, Ugrid_ana[-1][:],'k',linewidth=2)
+plt.plot(x_ana, Ugrid_int[-1][:],'k',linewidth=2)
 plt.plot(x, Ugrid[-1],'r',linewidth=2)
 plt.title(r'$t=1$', fontsize=18)
 plt.ylabel(r'$u$',fontsize=18)

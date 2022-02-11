@@ -83,11 +83,6 @@ x = np.linspace(0,1,n)
 y = np.linspace(0,1,n)
 Tgrid = np.meshgrid(x,y)
 X,Y   = np.meshgrid(x,y) 
- 
-T_ana = analytical_sol(Tgrid)
-
-R_ana = np.sum((T-T_ana)**2)
-MSE_ana = R_ana/(2*n*n) 
 
 print("\n\n## Solution for the 2-D Steady Heat Transfer problem")
 print("Convergence time = " + str(end_time-start_time) + " seconds")

@@ -38,9 +38,30 @@ tf = 1.0
 xs1 = -0.75
 xs2 = -0.25
 
+# Advection speed
+a = 1.0
+
 # Generate refined boundaries
-nx = 4711# 301
-nt = 4711# 301
+nx = 5201 # 301
+nt = 5201 # 301
+nx_ana = 301
+nt_ana = 301
+
+## Analytical solution
+def analytical_sol(nt, nx):
+    Outputs = np.zeros([nt,nx])
+    x = np.linspace(x0,xf,nx)
+    t = np.linspace(t0,tf,nt)
+    for xi in range(nx):
+        for ti in range(nt):
+            if x[xi]-a*t[ti] >= xs1 and x[xi]-a*t[ti] <= xs2:
+                Outputs[ti][xi] = 1.0
+    return Outputs
+
+x_ana = np.linspace(x0,xf,nx_ana)
+t_ana = np.linspace(t0,tf,nt_ana)
+X_ana,T_ana = np.meshgrid(x_ana,t_ana)
+Ugrid_ana = analytical_sol(nt_ana, nx_ana)
 
 MSE_ana    = 100000
 MSE_target = 0.0011362367862456778
@@ -55,7 +76,6 @@ while MSE_ana > MSE_target:
     Ugrid = np.zeros([nt,nx]) # Matrix that only receives the results from each time instance at each line.
 
     ## 1-D linear advection problem
-    a = 1.0
     delta_x = x[1] - x[0]   # since it is a linear distribution 
     delta_t = t[1] - t[0]   # From the original inputs, it gives a*delta_t/delta_x == 0.5, which matches the stability conditions
     '''
@@ -66,46 +86,42 @@ while MSE_ana > MSE_target:
     print('delta_t :', delta_t)
     print(' ')
     '''
+    # Initial condition
     for ii in range(nx):
         if x[ii] >= xs1 and x[ii] <= xs2:
             Ugrid[0,ii] = 1.0
-
-    ## Analytical solution
-    def analytical_sol():
-        Outputs = np.zeros([nt,nx])
-        for xi in range(nx):
-            for ti in range(nt):
-                if x[xi]-a*t[ti] >= xs1 and x[xi]-a*t[ti] <= xs2:
-                    Outputs[ti][xi] = 1.0
-        return Outputs
-
-    Ugrid_ana = analytical_sol()
                 
     ############################################################
     ## Execution
     start_time = time.time()
 
     for ti in range(1,nt): # time sweep, excluding the time at boundary where t == 0
-        for xi in range(1,nx): # position sweep, excluding the position where x == -1
-            Ugrid[ti,xi] = Ugrid[ti-1][xi] - (a*delta_t/delta_x)*(Ugrid[ti-1][xi] - Ugrid[ti-1][xi-1])
-
-    R_ana    = np.sum((Ugrid-Ugrid_ana)**2)
-    MSE_ana  = R_ana/(2*nx*nt) 
+        Ugrid[ti,1:] = Ugrid[ti-1][1:] - (a*delta_t/delta_x)*(Ugrid[ti-1][1:] - Ugrid[ti-1][:-1])
 
     end_time = time.time()
+
+    # Interpolate solution to validation points
+    from scipy.interpolate import RectBivariateSpline as spline
+    Ugrid_int = spline(t,x,Ugrid).ev(T_ana[:],X_ana[:]).reshape(X_ana.shape)
+    R_ana    = np.sum((Ugrid_int-Ugrid_ana)**2)
+    MSE_ana  = R_ana/(2*nx_ana*nt_ana)
+    print("MSE = " + str(MSE_ana))
     
-    nx = nx + 10
-    nt = nt + 10
+    nx = nx + 100
+    nt = nt + 100
     if (find_opt == False):
         break
+
+nx = nx - 100
+nt = nt - 100
 
 print("\n\n## Solution for the 1-D Linear Advection problem")
 print("Convergence time = " + str(end_time-start_time) + " seconds")
 print("MSE = " + str(MSE_ana))
+print("nx = " + str(nx))
+print("nt = " + str(nt))
 print(" ")
 
-nx = nx - 10
-nt = nt - 10
 ############################################################
 ## Plot the results
 
@@ -130,7 +146,7 @@ for i in np.linspace(0,nx-1,slice_size,dtype=int,endpoint=True):
 
 # Contour plot
 fig = plt.figure()
-CS = plt.contourf(Xs, Ts, Ugrid_s, cmap=cm.viridis, levels=np.linspace(level_min,level_max,11), extent=[-1, 1, 0, 1])
+CS = plt.contourf(X_ana, T_ana, Ugrid_int, cmap=cm.viridis, levels=np.linspace(level_min,level_max,11), extent=[-1, 1, 0, 1])
 plt.xlabel(r'$x$',fontsize=18)
 plt.ylabel(r'$t$',fontsize=18)
 plt.xticks(fontsize=14)
@@ -145,7 +161,7 @@ fig.savefig("./lin_adv/FD_lin_adv_"+str(nx)+"_x_"+str(nt)+".pdf")
 # Figure 2
 fig2 = plt.figure(figsize=(8,6))
 plt.subplot(2, 1, 1)
-plt.plot(x, Ugrid_ana[0][:],'k',label='Analytical',linewidth=2)
+plt.plot(x_ana, Ugrid_ana[0][:],'k',label='Analytical',linewidth=2)
 plt.plot(x, Ugrid[0],'r',label='Traditional solution',linewidth=2)
 plt.legend(loc='upper right', fontsize=18)
 plt.title(r'$t=0$', fontsize=18)
@@ -157,7 +173,7 @@ plt.yticks(fontsize=14)
 plt.grid(False)
 
 plt.subplot(2, 1, 2)
-plt.plot(x, Ugrid_ana[-1][:],'k',linewidth=2)
+plt.plot(x_ana, Ugrid_ana[-1][:],'k',linewidth=2)
 plt.plot(x, Ugrid[-1],'r',linewidth=2)
 plt.title(r'$t=1$', fontsize=18)
 plt.ylabel(r'$u$',fontsize=18)
