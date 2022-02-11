@@ -87,6 +87,8 @@ X,Y   = np.meshgrid(x,y)
 print("\n\n## Solution for the 2-D Steady Heat Transfer problem")
 print("Convergence time = " + str(end_time-start_time) + " seconds")
 print("MSE = " + str(MSE_ana))
+print("nx = " + str(nx))
+print("ny = " + str(ny))
 print(" ")
 #############################################################
 level_min=-0.05
