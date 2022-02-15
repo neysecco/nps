@@ -31,7 +31,7 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
     '''
 
     # Define a random number generator for repeatibility
-    rng = np.random.default_rng(seed=Theta_seed)
+    rng = np.random.default_rng(seed=123)
 
     opt_options = {}
 

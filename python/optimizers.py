@@ -169,7 +169,7 @@ def ALM(design_functions,x0,display=True,major_iterations=50,gamma=1,delta_x_tol
     #                     Could be either 'fminscg' or any other optimizer from scipy.minimize
 
     #IMPORTS
-    from numpy import ones, zeros, logical_not, abs, max
+    from numpy import ones, zeros, logical_not, abs, max, mod
     from numpy.linalg import norm
     import pickle
 
@@ -241,12 +241,15 @@ def ALM(design_functions,x0,display=True,major_iterations=50,gamma=1,delta_x_tol
             # Define dummy list to store the gradient to avoid repeated evaluation
             xx = [0]
             dF = [0]
+            iter_count = [0]
 
             def cost_fun(x):
                 F, dF_curr = cost_function(x)
-                print(F)
+                if mod(iter_count[0], 100) == 0:
+                    print('iter: %d, obj: '%(iter_count[0]) + str(F))
                 xx[0] = x
                 dF[0] = dF_curr
+                iter_count[0] = iter_count[0] + 1
                 return F
 
             def cost_fun_grad(x):
