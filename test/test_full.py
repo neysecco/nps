@@ -1,4 +1,4 @@
-from neural_nets import NN, funcs_regression, funcs_testing
+from nps import NN, funcs_regression, funcs_testing
 import numpy as np
 
 ############################################
