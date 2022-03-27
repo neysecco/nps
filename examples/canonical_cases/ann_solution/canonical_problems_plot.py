@@ -4,6 +4,8 @@ import pickle
 import matplotlib.pyplot as plt
 from numpy import zeros, linspace, argmin
 
+exec(open("../../figure_template.py").read())
+
 canonical_prob   = ['lin_adv', 'lin_adv2','heat_eq','heat_cond','burgers']
 minor_iter  = [2500,2500,2500,2500,2500]
 major_iter  = [10,10,10,10,10,10,10]

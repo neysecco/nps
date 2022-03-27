@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from matplotlib import cm, rcParams, pyplot
 from matplotlib.ticker import LinearLocator, FormatStrFormatter,StrMethodFormatter
 
-rcParams['mathtext.fontset'] = 'stix'
-rcParams['font.family'] = 'STIXGeneral'
+#rcParams['mathtext.fontset'] = 'stix'
+#rcParams['font.family'] = 'STIXGeneral'
 
 def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
               num_neurons=None, clean_image_dir=False, Theta_seed=123, axis_label=['x','y']):
@@ -1716,15 +1716,25 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
              
         ## MSE evolution over ALM iterations
         fig2 = plt.figure()
-        plt.semilogy(iterations_ALM,valMSE_ALM, linewidth=2, label=r'$MSE_{val}$')
-        plt.semilogy(iterations_ALM,Residual_PDE_ALM, linewidth=2, label=r'PDE residuals')
-        plt.semilogy(iterations_ALM,Residual_BC_ALM, linewidth=2, label=r'BC residuals')
-        plt.semilogy(iterations_ALM,weights_ALM, linewidth=2, label=r'ANN weights')
+        plt.semilogy(iterations_ALM,valMSE_ALM, '-o', linewidth=2, label=r'$MSE_{val}$')
+        plt.semilogy(iterations_ALM,Residual_PDE_ALM, '-o', linewidth=2, label=r'PDE residuals')
+        plt.semilogy(iterations_ALM,Residual_BC_ALM, '-o', linewidth=2, label=r'BC residuals')
+        plt.semilogy(iterations_ALM,weights_ALM, '-o', linewidth=2, label=r'ANN weights')
+        
+        # Comment if you are generating the plot for the article
+        # with the MSE history for the lin_adv case
         plt.legend(loc='best',fontsize=18)
+
+        # Uncomment just for the linear advection case
+        #colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+        #plt.text(7, 1e-4, r'$\bm{MSE_{val}}$', color=colors[0], fontsize=16)
+        #plt.text(7, 1e-12, r'$\bm{\mathrm{PDE \; residuals}}$', color=colors[1], fontsize=16)
+        #plt.text(5, 0.5e-16, r'$\bm{\mathrm{BC \; residuals}}$', color=colors[2], fontsize=16)
+        #plt.text(7, 1e0, r'$\bm{\mathrm{ANN \; weights}}$', color=colors[3], fontsize=16)
         
         # Add labels
-        plt.xlabel(r'$ALM \:\: iterations$',fontsize=18)
-        plt.ylabel(r'$Mean\:\:Square$',fontsize=18)
+        plt.xlabel(r'$\mathrm{ALM \; iterations}$',fontsize=18)
+        plt.ylabel(r'$\mathrm{Mean \; Squared \; Value}$',fontsize=18)
         plt.xticks(iterations_ALM,fontsize=14)
         plt.yticks(fontsize=14)
         plt.tight_layout()
