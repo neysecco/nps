@@ -5,6 +5,8 @@ from test_cases_journal import load_case
 import pickle
 import matplotlib.pyplot as plt
 
+exec(open("../figure_template.py").read())
+
 # Problem options
 case_name = 'potflow_doublenet'
 dist_type = 'unstructured'

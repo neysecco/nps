@@ -2,7 +2,7 @@
 '''
 For this problem, we'll be using the first-order Gudonov Method, 
 which applies a backward finite difference for the x derivative (for stability reasons) 
-and foward difference for the time derivative (since we want to use information from the previous time level). 
+and forward difference for the time derivative (since we want to use information from the previous time level). 
 
 We got these equations from the "International Centre for Theoretical Physics" lecture notes.
 You can find more information from the documents provided at the google drive, or directly from the following link:
@@ -17,12 +17,15 @@ import matplotlib.pyplot as plt
 from matplotlib import cm, rcParams
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
-rcParams['mathtext.fontset'] = 'stix'
-rcParams['font.family'] = 'STIXGeneral'
+exec(open("../../figure_template.py").read())
+#rcParams['mathtext.fontset'] = 'stix'
+#rcParams['font.family'] = 'STIXGeneral'
 
 if not os.path.exists('./lin_adv'):
     os.makedirs('./lin_adv')
-    
+
+# Turn this flag on if you wisj to increase the number of
+# node until reaching the ANN MSEval
 find_opt = False
     
 #############################################################
@@ -42,8 +45,8 @@ xs2 = -0.25
 a = 1.0
 
 # Generate refined boundaries
-nx = 5201 # 301
-nt = 5201 # 301
+nx = 301 # The article used either 301 or 5201
+nt = 301 # The article used either 301 or 5201
 nx_ana = 301
 nt_ana = 301
 
@@ -147,13 +150,15 @@ for i in np.linspace(0,nx-1,slice_size,dtype=int,endpoint=True):
 # Contour plot
 fig = plt.figure()
 CS = plt.contourf(X_ana, T_ana, Ugrid_int, cmap=cm.viridis, levels=np.linspace(level_min,level_max,11), extent=[-1, 1, 0, 1])
-plt.xlabel(r'$x$',fontsize=18)
-plt.ylabel(r'$t$',fontsize=18)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
+plt.xlabel(r'$x$',fontsize=22)
+plt.ylabel(r'$t$',fontsize=22)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
 cb = plt.colorbar(CS)
-cb.set_label(label=r'$u$',size=18)
-cb.ax.tick_params(labelsize=14)
+cb.set_label(label=r'$u$',size=22)
+cb.ax.tick_params(labelsize=18)
+fig.gca().spines['right'].set_visible(True)
+fig.gca().spines['top'].set_visible(True)
 plt.tight_layout()
 #plt.show()
 fig.savefig("./lin_adv/FD_lin_adv_"+str(nx)+"_x_"+str(nt)+".pdf")
@@ -161,25 +166,28 @@ fig.savefig("./lin_adv/FD_lin_adv_"+str(nx)+"_x_"+str(nt)+".pdf")
 # Figure 2
 fig2 = plt.figure(figsize=(8,6))
 plt.subplot(2, 1, 1)
-plt.plot(x_ana, Ugrid_ana[0][:],'k',label='Analytical',linewidth=2)
-plt.plot(x, Ugrid[0],'r',label='Traditional solution',linewidth=2)
+plt.plot(x_ana, Ugrid_ana[0][:],'k',label=r'$\mathrm{Analytical}$',linewidth=2)
+plt.plot(x, Ugrid[0],'r',label=r'$\mathrm{FD \; solution}$',linewidth=2)
 plt.legend(loc='upper right', fontsize=18)
-plt.title(r'$t=0$', fontsize=18)
-plt.ylabel(r'$u$',fontsize=18)
-plt.ylabel(r'$u$', fontsize=18)
-plt.xlabel(' ',fontsize=14)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
+plt.title(r'$t=0$', fontsize=22)
+plt.ylabel(r'$u$',fontsize=22)
+#plt.xlabel(' ',fontsize=14)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+fig2.gca().spines['right'].set_visible(True)
+fig2.gca().spines['top'].set_visible(True)
 plt.grid(False)
 
 plt.subplot(2, 1, 2)
 plt.plot(x_ana, Ugrid_ana[-1][:],'k',linewidth=2)
 plt.plot(x, Ugrid[-1],'r',linewidth=2)
-plt.title(r'$t=1$', fontsize=18)
-plt.ylabel(r'$u$',fontsize=18)
-plt.xlabel(r'$x$',fontsize=18)
-plt.xticks(fontsize=16)
-plt.yticks(fontsize=16)
+plt.title(r'$t=1$', fontsize=22)
+plt.ylabel(r'$u$',fontsize=22)
+plt.xlabel(r'$x$',fontsize=22)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+fig2.gca().spines['right'].set_visible(True)
+fig2.gca().spines['top'].set_visible(True)
 plt.grid(False)
 
 fig2.tight_layout()

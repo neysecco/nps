@@ -242,14 +242,21 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
             title_list = [r'$t=%g$'%yy for yy in y_slices]
 
             # Call the slice function
-            fig = plot_slice(NN_set,
+
+            if (case_name == 'lin_adv' or case_name == 'lin_adv_aneg'):
+                figsize = (8,6)
+            elif case_name == 'lin_adv2':
+                figsize = (8,7.5)
+
+            fig = plot_slice(case_name, NN_set,
                              analytical_sol,
                              Xpair_list,
                              n_list,
                              title_list,
                              x_label = r'$x$',
                              p0 = x0,
-                             pf = xf)
+                             pf = xf,
+                             figsize=figsize)
 
             return [fig]
 
@@ -449,7 +456,7 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
             title_list = [r'$x=%g$'%xx for xx in x_slices]
 
             # Call the slice function
-            fig = plot_slice(NN_set,
+            fig = plot_slice(case_name, NN_set,
                              analytical_sol,
                              Xpair_list,
                              n_list,
@@ -658,7 +665,7 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
             title_list = [r'$t=%g$'%yy for yy in y_slices]
 
             # Call the slice function
-            fig = plot_slice(NN_set,
+            fig = plot_slice(case_name, NN_set,
                              analytical_sol,
                              Xpair_list,
                              n_list,
@@ -862,14 +869,15 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
             title_list = [r'$t=%g$'%yy for yy in y_slices]
 
             # Call the slice function
-            fig = plot_slice(NN_set,
+            fig = plot_slice(case_name, NN_set,
                              analytical_sol,
                              Xpair_list,
                              n_list,
                              title_list,
                              x_label = r'$x$',
                              p0 = x0,
-                             pf = xf)
+                             pf = xf,
+                             legend_box = 2)
 
             return [fig]
 
@@ -1124,18 +1132,22 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
             v = Sens[1,:]
             cp = 1 - (u**2+v**2)
             cp_an = 2*np.cos(2*theta)-1
+            theta2 = np.linspace(0, np.pi, 101)[:-1]
+            xx = r0*np.cos(theta2)
+            cp_an = 2*np.cos(2*theta2)-1
             
             # Plotting results with sensitivities
             # More imports
             fig = plt.figure()
             #plt.subplot(211)
-            plt.plot(Inputs_inner[0,:],cp,'o',label='ANN')
-            plt.plot(Inputs_inner[0,:],cp_an,'k',label='Analytical')
-            plt.xlabel(r'$x$',fontsize=18)
-            plt.ylabel(r'$Cp$',fontsize=18)
-            plt.legend(loc='best',fontsize=18)
+            plt.plot(Inputs_inner[0,:],cp,'o',label=r'$\mathrm{ANN}$')
+            plt.plot(xx,cp_an,'k',label=r'$\mathrm{Analytical}$')
+            plt.xlabel(r'$x$',fontsize=22)
+            plt.ylabel(r'$C_p$',fontsize=22)
+            plt.legend(loc='best',fontsize=20)
+            plt.tight_layout()
 
-            fig.savefig('./potflow_doublenet/potflow_doublenet_compare_plot.pdf',dpi=300)
+            fig.savefig('./potflow_doublenet/potflow_doublenet_compare_plot.pdf')
             plt.close(fig)
             return [fig]
 
@@ -1195,10 +1207,13 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
                 #plt.axis('equal')
 
                 # Add labels
-                plt.xlabel(r'$x$',fontsize=18)
-                plt.ylabel(r'$y$',fontsize=18)
-                plt.xticks(fontsize=14)
-                plt.yticks(fontsize=14)
+                plt.xlabel(r'$x$',fontsize=26)
+                plt.ylabel(r'$y$',fontsize=26)
+                plt.xticks(fontsize=18)
+                plt.yticks(fontsize=18)
+                ax.spines['right'].set_visible(True)
+                ax.spines['top'].set_visible(True)
+                plt.tight_layout()
 
                 # Save figure
                 fig.savefig('./potflow_doublenet/potflow_doublenet_streamlines.pdf',dpi=300)
@@ -1460,10 +1475,13 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
             #plt.axis('equal')
 
             # Add labels
-            plt.xlabel(r'$x$',fontsize=18)
-            plt.ylabel(r'$y$',fontsize=18)
-            plt.xticks(fontsize=14)
-            plt.yticks(fontsize=14)
+            plt.xlabel(r'$x$',fontsize=26)
+            plt.ylabel(r'$y$',fontsize=26)
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.spines['right'].set_visible(True)
+            ax.spines['top'].set_visible(True)
+            plt.tight_layout()
 
             # Save figure
             fig.savefig('./potflow_singlenet/potflow_singlenet_streamlines.pdf',dpi=300)
@@ -1493,13 +1511,14 @@ def load_case(case_name, dist_type, optimizer, boundary_points, domain_points,
 
             #plt.subplot(211)
 
-            plt.plot(Inputs_inner[0,:],cp,'o',label='ANN')
-            plt.plot(xx,cp_an,'k',label='Analytical')
-            plt.xlabel(r'$x$',fontsize=18)
-            plt.ylabel(r'$Cp$',fontsize=18)
-            plt.legend(loc='best',fontsize=18)
+            plt.plot(Inputs_inner[0,:],cp,'o',label=r'$\mathrm{ANN}$')
+            plt.plot(xx,cp_an,'k',label=r'$\mathrm{Analytical}$')
+            plt.xlabel(r'$x$',fontsize=22)
+            plt.ylabel(r'$C_p$',fontsize=22)
+            plt.legend(loc='best',fontsize=20)
+            plt.tight_layout()
             
-            fig.savefig('./potflow_singlenet/potflow_singlenet_compare_plot.pdf',dpi=300)
+            fig.savefig('./potflow_singlenet/potflow_singlenet_compare_plot.pdf')
             plt.close(fig)
             return [fig]
 
@@ -1858,16 +1877,18 @@ def plot_surface(NN_set,
     # Contour plot
     fig2 = plt.figure()
     CS = plt.contourf(X, Y, Z_T, cmap=cm.viridis, levels=np.linspace(level_min,level_max,11))
-    plt.plot(Inputs_do[0,:],Inputs_do[1,:],'o',markersize=3,c='r')
-    plt.scatter(Inputs_bc[0,:],Inputs_bc[1,:],c='r')
-    plt.xlabel(r'$' + axis_label[0] + '$',fontsize=18)
-    plt.ylabel(r'$' + axis_label[1] + '$',fontsize=18)
+    plt.plot(Inputs_do[0,:],Inputs_do[1,:],'o',markersize=3,c='r',alpha=0.5)
+    plt.plot(Inputs_bc[0,:],Inputs_bc[1,:],'o',markersize=3,c='r',alpha=0.5)
+    plt.xlabel(r'$' + axis_label[0] + '$',fontsize=20)
+    plt.ylabel(r'$' + axis_label[1] + '$',fontsize=20)
     cb = plt.colorbar(CS)
-    cb.ax.tick_params(labelsize=14)
-    cb.set_label(label=r'$u$',size=18)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
-    fig2.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}')) # 2 decimal places
+    cb.ax.tick_params(labelsize=16)
+    cb.set_label(label=r'$u$',size=20)
+    fig2.gca().spines['right'].set_visible(True)
+    fig2.gca().spines['top'].set_visible(True)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    #fig2.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}')) # 2 decimal places
     plt.tight_layout()
 
     # RETURNS
@@ -1875,7 +1896,7 @@ def plot_surface(NN_set,
 
 ###########################################
 
-def plot_slice(NN_set,
+def plot_slice(case_name, NN_set,
                analytical_sol,
                Xpair_list,
                n_list,
@@ -1883,7 +1904,8 @@ def plot_slice(NN_set,
                x_label = r'$\alpha$',
                figsize=(8,6),
                p0 = 0,
-               pf = 1):
+               pf = 1,
+               legend_box = 1):
     '''
     This functions plots a figure containing
     several domain slices
@@ -1894,6 +1916,7 @@ def plot_slice(NN_set,
                                       [[xs2, ys2], [xf2, yf2]],
                                       [[xs3, ys3], [xf3, yf3]],
                                       .........................]
+    legend_box: which subplot should have the legend box
     '''
     
     # Get reference to the ANN
@@ -1949,29 +1972,40 @@ def plot_slice(NN_set,
         plt.subplot(num_slices, 1, slice_id)
 
         # Plot analytical solution
-        plt.plot(alpha_ref, Outputs_ref_an, 'k', label='Analytical', linewidth=2)
+        plt.plot(alpha_ref, Outputs_ref_an, 'k', label=r'$\mathrm{Analytical}$', linewidth=2)
 
         # Plot ANN solution
-        plt.scatter(alpha, Outputs, c='r', label='ANN training points')
+        plt.scatter(alpha, Outputs, c='r', label=r'$\mathrm{ANN \; training \; points}$')
 
         # Plot ANN solution at refined points
-        plt.plot(alpha_ref, Outputs_ref, 'r', linewidth=2, label='ANN')
+        plt.plot(alpha_ref, Outputs_ref, 'r', linewidth=2, label=r'$\mathrm{ANN}$')
 
         # Add title to the plot
-        plt.title(r'' + title, fontsize=18)
-        plt.ylabel(r'$u$',fontsize=18)
-        plt.xticks(fontsize=14)
-        plt.yticks(fontsize=14)
+        plt.title(r'' + title, fontsize=22)
+        plt.ylabel(r'$u$',fontsize=22)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
         # Add legend to the first plot only
-        if slice_id == 1:
-            plt.legend(loc='best',fontsize=18)
+        if slice_id == legend_box:
+            if case_name == 'lin_adv2':
+                plt.legend(loc='upper right', fontsize=17, bbox_to_anchor=(1.03, 2.05))
+            elif case_name == 'heat_eq':
+                plt.legend(loc='upper right', fontsize=17, bbox_to_anchor=(1.00, 1.05))
+            elif case_name == 'heat_cond':
+                plt.legend(loc='upper right', fontsize=18, bbox_to_anchor=(1.00, 1.05))
+            elif case_name == 'burgers':
+                plt.legend(loc='upper left', fontsize=17)
+            else:
+                plt.legend(loc='best',fontsize=18)
 
         # Increment slice counter
         slice_id = slice_id + 1
-        fig.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}')) # 2 decimal places
+        #fig.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}')) # 2 decimal places
+        fig.gca().spines['right'].set_visible(True)
+        fig.gca().spines['top'].set_visible(True)
 
     # Add label to the horizontal axis
-    plt.xlabel(r''+ x_label,fontsize=18)
+    plt.xlabel(r''+ x_label,fontsize=22)
     # Adjust the plot
     plt.tight_layout()
 
@@ -1994,11 +2028,11 @@ def plot_canonical(NN_set, plot_function, image_name):
     figs = plot_function(NN_set)
     for ii,fig in enumerate(figs):
         if ii == 0:
-            fig.savefig(image_name+'_domain',dpi=300)
+            fig.savefig(image_name+'_domain.pdf')#,dpi=300)
             plt.close(fig)
         elif ii == 1:
-            fig.savefig(image_name+'_slice',dpi=300)
+            fig.savefig(image_name+'_slice.pdf')#,dpi=300)
             plt.close(fig)
         else:
-            fig.savefig(image_name+'_'+str(ii),dpi=300)
+            fig.savefig(image_name+'_'+str(ii)+'.pdf')#,dpi=300)
             plt.close(fig)

@@ -17,8 +17,9 @@ import matplotlib.pyplot as plt
 from matplotlib import cm, rcParams
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
-rcParams['mathtext.fontset'] = 'stix'
-rcParams['font.family'] = 'STIXGeneral'
+exec(open("../../figure_template.py").read())
+#rcParams['mathtext.fontset'] = 'stix'
+#rcParams['font.family'] = 'STIXGeneral'
 
 if not os.path.exists('./lin_adv2'):
     os.makedirs('./lin_adv2')
@@ -99,7 +100,6 @@ print(" ")
 level_min=-1.05
 level_max=1.05
 
-
 #Slice arrays
 slice_size = 301
 Xs      = [[0]*slice_size for _ in range(slice_size)]
@@ -119,13 +119,15 @@ for i in np.linspace(0,nt-1,slice_size,dtype=int,endpoint=True):
 # Contour plot
 fig = plt.figure()
 CS = plt.contourf(Xs, Ts, Ugrid_s, cmap=cm.viridis, levels=np.linspace(level_min,level_max,11), extent=[-1, 1, 0, 1])
-plt.xlabel(r'$x$',fontsize=18)
-plt.ylabel(r'$t$',fontsize=18)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
+plt.xlabel(r'$x$',fontsize=22)
+plt.ylabel(r'$t$',fontsize=22)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
 cb = plt.colorbar(CS)
-cb.set_label(label=r'$u$',size=18)
-cb.ax.tick_params(labelsize=14)
+cb.set_label(label=r'$u$',size=22)
+cb.ax.tick_params(labelsize=18)
+fig.gca().spines['right'].set_visible(True)
+fig.gca().spines['top'].set_visible(True)
 plt.tight_layout()
 #plt.show()
 fig.savefig("./lin_adv2/FD_lin_adv2_"+str(nx)+"_x_"+str(nt)+".pdf")
@@ -134,27 +136,31 @@ fig.savefig("./lin_adv2/FD_lin_adv2_"+str(nx)+"_x_"+str(nt)+".pdf")
 # Figure 2
 fig2 = plt.figure(figsize=(8,6))
 plt.subplot(2, 1, 1)
-plt.plot(x_ana, Ugrid_int[0][:],'k',label='Analytical',linewidth=2)
-plt.plot(x, Ugrid[0],'r',label='Traditional solution',linewidth=2)
-plt.legend(loc='upper right', fontsize=18)
-plt.title(r'$t=0$', fontsize=18)
-plt.ylabel(r'$u$',fontsize=18)
-plt.xlabel(' ',fontsize=14)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
+plt.plot(x_ana, Ugrid_ana[0][:],'k',label=r'$\mathrm{Analytical}$',linewidth=2)
+plt.plot(x, Ugrid[0],'r',label=r'$\mathrm{FD \; solution}$',linewidth=2)
+plt.legend(loc='upper right', fontsize=18, bbox_to_anchor=(1.03, 1.35))
+plt.title(r'$t=0$', fontsize=22)
+plt.ylabel(r'$u$',fontsize=22)
+#plt.xlabel(' ',fontsize=14)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+fig2.gca().spines['right'].set_visible(True)
+fig2.gca().spines['top'].set_visible(True)
 plt.grid(False)
 
 plt.subplot(2, 1, 2)
 plt.plot(x_ana, Ugrid_int[-1][:],'k',linewidth=2)
 plt.plot(x, Ugrid[-1],'r',linewidth=2)
-plt.title(r'$t=1$', fontsize=18)
-plt.ylabel(r'$u$',fontsize=18)
-plt.xlabel(r'$x$',fontsize=18)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
+plt.title(r'$t=1$', fontsize=22)
+plt.ylabel(r'$u$',fontsize=22)
+plt.xlabel(r'$x$',fontsize=22)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+fig2.gca().spines['right'].set_visible(True)
+fig2.gca().spines['top'].set_visible(True)
 
 plt.grid(False)
 
 fig2.tight_layout()
 fig2.savefig("./lin_adv2/FD_lin_adv2_"+str(nx)+"_x_"+str(nt)+"_slice.pdf")
-#plt.show()
+plt.show()

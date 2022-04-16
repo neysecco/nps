@@ -115,7 +115,7 @@ fig2  = plt.figure(figsize=(8,8))
 
 plt.subplot(3, 1, 1)
 plt.plot(y, T_ana[int(len(x)/5)][:],'k',label='Analytical',linewidth=2)
-plt.plot(y, T[int(len(x)/5)][:],'r',label='Traditional solution',linewidth=2)
+plt.plot(y, T[int(len(x)/5)][:],'r',label='FD solution',linewidth=2)
 plt.legend(loc='best')
 plt.title(r'$x='+str(x[int(len(x)/5)])+'$',fontsize=18)
 plt.ylabel(r'$u$', fontsize=18)
