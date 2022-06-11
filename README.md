@@ -1,5 +1,12 @@
 # nps
 
+Mesh-free Solver based on Artificial Neural Networks to solve Partial Differential Equations
+
+This repository contains a Python module to train Artificial Neural Networks (ANNs) to approximate Partial Differential Equation (PDE) solutions based on a cloud of points distributed over the domain and its boundaries. The functionals that represent the PDE and boundary conditions are directly applied as objective and constraints of such optimization, avoiding the need of equation and domain discretization. The same numerical procedure solves PDEs of different types (hyperbolic, elliptic, and parabolic).
+
+Please cite the following manuscript if you intend to use this code:
+F. T. Kunz, N. R. Sêcco, ANN-based mesh-free method to solve partial differential equations, in Proceedings of the 26th International Congress of Mechanical Engineering, Florianópolis, Brazil, 2021. doi:10.26678/ABCM.COBEM2021.COB2021-0094.
+
 ---
 
 ## Cloning a repository
@@ -36,23 +43,33 @@ Follow the steps below to install nps in your system:
 4. Add the following line to the end of your bashrc file: **export PYTHONPATH="${PYTHONPATH}:<dir>"**, where <dir> is the directory you got in step 2. This will include the nps module in Python's search directory, allowing you to import it from any directory in your system.
 5. Save and close the text editor.
 6. Back into the terminal, type: **$ source ~/.bashrc**. This will reload the definitions from the bashrc file. You may also close and reopen the terminal for these changes to make effect.
-7. Still with the terminal at the root folder of the respository, execute the command: **$ make**. Wait until the installation is complete.
+7. Still with the terminal at the root folder of the repository, execute the command: **$ make**. Wait until the installation is complete.
 8. Test the installation by running **$ make test** in your terminal.
+
+---
+
+## Linear Advection Case
+
+A sample script on how to use NPS to solve the Linear Advection PDE can be found at:
+**/nps/examples/tutorial/lin_adv_tutorial.py**
+
+Please use this script as reference to solve other PDE cases.
 
 ---
 
 ## Canonical problems
 
-From the test and other canonical cases, results may differ depending on the versions of the numerical packages.
+This repository contains the scripts used to solve the canonical PDEs presented in the associated manuscript.
+MSE and timing results may differ from the ones presented in the manuscript depending on the optimizer behavior in different computers.
 
-Regarding the reproducibility of the results shown in the manuscript, each folder has a **.pickle** file, which contains the trained neural network for each case.
+Regarding the reproducibility of the results shown in the manuscript, each folder has a **.pickle** file, which contains the reference neural networks for each case.
 
-To reproduce the main article plots with the trained neural networks, execute the following Python3 codes:
+To reproduce the main article plots with the reference neural networks, execute the following Python3 scripts:
 - **/nps/examples/canonical_cases/ann_solution/canonical_problems_plot.py**
 - **/nps/examples/pot_flow/potflow_1_ANN_plot.py**
 - **/nps/examples/pot_flow/potflow_2_ANN_plot.py**
 
-To retrain the article cases neural networks from the scratch, execute the following Python3 codes:
+To retrain the article cases neural networks from the scratch, execute the following Python3 scripts:
 - **/nps/examples/canonical_cases/ann_solution/canonical_problems.py**
 - **/nps/examples/pot_flow/potflow_1_ANN.py**
 - **/nps/examples/pot_flow/potflow_2_ANN.py**
@@ -61,4 +78,10 @@ To retrain the article cases neural networks from the scratch, execute the follo
 
 ## Contact
 
-Report any issues to Ney Sêcco at ney@ita.br
+Report any issues to:
+
+Ney Sêcco
+Instructor at the Aeronautical and Aerospace Division
+Aeronautics Institute of Technology - ITA
+São José dos Campos, SP, Brazil
+ney@ita.br
