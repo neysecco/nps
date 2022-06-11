@@ -37,8 +37,7 @@ def eval_case(theta_seed, canonical_prob, minor_iter, major_iter, boundary_point
     Targets_bc] = load_case(canonical_prob, dist_type, optimizer,boundary_points,domain_points,
                             clean_image_dir=True,num_neurons=num_neurons,Theta_seed=theta_seed,axis_label=axis_label)
     
-    # Modify the initial seed.
-    training_time = 0.0
+    # Set additional parameters
     rhoKS         = 0.0
     reg_factor    = 0.0
     
