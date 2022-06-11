@@ -16,7 +16,7 @@ Follow the steps below to clone this repository in your system:
 1. Make sure you have **git** installed in your machine. You can install it by opening a terminal session and running the following command: **$ sudo apt install git**
 2. You’ll see a "Code" green button on the upper-right side of the repository webpage. Click on it and copy the web URL shown from **HTTPS** tab.
 3. Open a terminal instance in your system and navigate to the directory where you want to clone the repository.
-4. Write **$git clone **, paste the web URL you copied in step 3 (You can use CTRL+SHIFT+V to paste on the terminal screen) and execute it.
+4. Write **\$git clone **, paste the web URL you copied in step 3 (You can use CTRL+SHIFT+V to paste on the terminal screen) and execute it.
 5. Type your Github login and [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 6. Git should clone the repository: All done!
 
@@ -39,12 +39,12 @@ Follow the steps below to install nps in your system:
 
 1. Once you clone the repository, open a terminal session and navigate to the root folder of the repository.
 2. Write down the directory that holds the root folder. For instance, if you installed nps in **/home/user/git/nps**, the the directory you must remember is **/home/user/git**.
-3. Open your bashrc file with the following command: **$ gedit ~/.bashrc** (You can use another text editor if you wish).
+3. Open your bashrc file with the following command: **\$ gedit ~/.bashrc** (You can use another text editor if you wish).
 4. Add the following line to the end of your bashrc file: **export PYTHONPATH="${PYTHONPATH}:<dir>"**, where <dir> is the directory you got in step 2. This will include the nps module in Python's search directory, allowing you to import it from any directory in your system.
 5. Save and close the text editor.
-6. Back into the terminal, type: **$ source ~/.bashrc**. This will reload the definitions from the bashrc file. You may also close and reopen the terminal for these changes to make effect.
-7. Still with the terminal at the root folder of the repository, execute the command: **$ make**. Wait until the installation is complete.
-8. Test the installation by running **$ make test** in your terminal.
+6. Back into the terminal, type: **\$ source ~/.bashrc**. This will reload the definitions from the bashrc file. You may also close and reopen the terminal for these changes to make effect.
+7. Still with the terminal at the root folder of the repository, execute the command: **\$ make**. Wait until the installation is complete.
+8. Test the installation by running **\$ make test** in your terminal.
 
 ---
 
