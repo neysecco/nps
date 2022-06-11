@@ -16,7 +16,7 @@ Follow the steps below to clone this repository in your system:
 1. Make sure you have **git** installed in your machine. You can install it by opening a terminal session and running the following command: **$ sudo apt install git**
 2. You’ll see a "Code" green button on the upper-right side of the repository webpage. Click on it and copy the web URL shown from **HTTPS** tab.
 3. Open a terminal instance in your system and navigate to the directory where you want to clone the repository.
-4. Write **\$git clone **, paste the web URL you copied in step 3 (You can use CTRL+SHIFT+V to paste on the terminal screen) and execute it.
+4. Write **$ git clone**, paste the web URL you copied in step 3 (You can use CTRL+SHIFT+V to paste on the terminal screen) and execute it.
 5. Type your Github login and [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 6. Git should clone the repository: All done!
 
